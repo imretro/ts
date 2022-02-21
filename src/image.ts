@@ -10,8 +10,19 @@ export default class Image {
     }
   }
 
-  public static validateSignature(signature: Uint8Array): boolean {
-    return String.fromCharCode(...signature) === Image.signature;
+  public static validateSignature(signature: ArrayBuffer | Uint8Array | string): boolean {
+    let s: string;
+
+    if (signature instanceof ArrayBuffer) {
+      const bytes = new Uint8Array(signature);
+      s = String.fromCharCode(...bytes);
+    } else if (signature instanceof Uint8Array) {
+      s = String.fromCharCode(...signature);
+    } else {
+      s = signature;
+    }
+
+    return s === Image.signature;
   }
 
   public static decode(bytes: ArrayBuffer): Image {
