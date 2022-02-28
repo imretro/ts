@@ -14,7 +14,7 @@
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "exclude": ["node_modules", "**/*.test.ts", "dist/"]
 }
