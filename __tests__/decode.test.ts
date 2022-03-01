@@ -37,7 +37,7 @@ describe('decode', () => {
   });
 
   test('read mode byte', () => {
-    const buff = new ArrayBuffer(8);
+    const buff = new ArrayBuffer(20);
     addSignature(buff);
     const modeByteView = new Uint8Array(buff, 7, 1);
     modeByteView[0] = PixelMode.EightBit
@@ -51,6 +51,19 @@ describe('decode', () => {
     expect(m.paletteIncluded).toEqual(PaletteIncluded.Yes);
     expect(m.colorChannels).toEqual(ColorChannels.RGB);
     expect(m.colorAccuracy).toEqual(ColorAccuracy.EightBit);
+  });
+
+  test('dimensions', () => {
+    const buff = new ArrayBuffer(20);
+    addSignature(buff);
+    const view = new Uint8Array(buff, 8, 3);
+    view[0] = 0x01;
+    view[1] = 0x20;
+    view[2] = 0x24;
+
+    const m = Image.decode(buff);
+    expect(m.width).toBe(0x012);
+    expect(m.height).toBe(0x024);
   });
 });
 

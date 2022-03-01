@@ -1,5 +1,8 @@
+import { Reader as BitReader } from '@imretro/bitio';
 import { DecodeError } from './errors';
 import * as flags from './flags';
+
+type Dimensions = { x: number, y: number };
 
 export default class Image {
   public static readonly signature = 'IMRETRO';
@@ -12,6 +15,10 @@ export default class Image {
 
   public readonly colorAccuracy: flags.ColorAccuracy;
 
+  public readonly width: number;
+
+  public readonly height: number;
+
   private constructor(bytes: ArrayBuffer) {
     const signature = new Uint8Array(bytes, 0, 7);
     if (!Image.validateSignature(signature)) {
@@ -23,6 +30,9 @@ export default class Image {
     this.paletteIncluded = flags.getPaletteIncludedFlag(mode);
     this.colorChannels = flags.getColorChannelFlag(mode);
     this.colorAccuracy = flags.getColorAccuracyFlag(mode);
+    const dimensions = Image.decodeDimensions(new Uint8Array(bytes, 8, 3));
+    this.width = dimensions.x;
+    this.height = dimensions.y;
   }
 
   public static validateSignature(signature: ArrayBuffer | Uint8Array | string): boolean {
@@ -38,6 +48,13 @@ export default class Image {
     }
 
     return s === Image.signature;
+  }
+
+  private static decodeDimensions(bytes: Uint8Array): Dimensions {
+    const reader = new BitReader(bytes);
+    const x = reader.readBits(12);
+    const y = reader.readBits(12);
+    return { x, y };
   }
 
   public static decode(bytes: ArrayBuffer): Image {
