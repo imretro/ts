@@ -3,9 +3,13 @@ import * as flags from './flags';
 
 export default class Image {
   public static readonly signature = 'IMRETRO';
+
   public readonly pixelMode: flags.PixelMode;
+
   public readonly paletteIncluded: flags.PaletteIncluded;
+
   public readonly colorChannels: flags.ColorChannels;
+
   public readonly colorAccuracy: flags.ColorAccuracy;
 
   private constructor(bytes: ArrayBuffer) {
