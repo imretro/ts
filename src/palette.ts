@@ -1,5 +1,6 @@
 import type Color from './color';
-import { ColorChannels as PaletteType } from './flags';
+import { PixelMode } from './flags';
+import { colorsToPixelMode } from './util';
 
 export type PaletteColors = Array<Color>;
 
@@ -43,17 +44,8 @@ export default class Palette {
     return this.colors.length;
   }
 
-  public get paletteType(): PaletteType {
-    switch (this.colorCount) {
-      case 2:
-        return PaletteType.Grayscale;
-      case 4:
-        return PaletteType.RGB;
-      case 256:
-        return PaletteType.RGBA;
-      default:
-        throw new Error('unreachable');
-    }
+  public get pixelMode(): PixelMode {
+    return colorsToPixelMode(this.colorCount);
   }
 
   /**
@@ -66,8 +58,8 @@ export default class Palette {
   }
 
   private toIndex(color: Color): number {
-    switch (this.paletteType) {
-      case PaletteType.Grayscale:
+    switch (this.pixelMode) {
+      case PixelMode.OneBit:
         return Palette.oneBitIndex(color);
       default:
         throw new Error('Unimplemented');
