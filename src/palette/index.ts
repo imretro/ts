@@ -1,6 +1,6 @@
 import type { Color } from '@imretro/color';
-import { PixelMode } from './flags';
-import type { ColorCount } from './util';
+import { PixelMode } from '../flags';
+import type { ColorCount } from '../util';
 
 export type PaletteColors = Array<Color>;
 
