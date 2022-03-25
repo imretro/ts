@@ -1,16 +1,13 @@
-import { Palette } from '../src/index';
-import { GrayscaleColor } from '../src/index';
+import { OneBitPalette } from '../src/index';
+import { Grayscale } from '@imretro/color';
 
 describe('Palette', () => {
-  describe('convert', () => {
-    describe('OneBitPixels', () => {
-      const palette = new Palette([
-        new GrayscaleColor(0xFF),
-        new GrayscaleColor(0),
-      ]);
+  describe('OneBitPalette', () => {
+    describe('convert', () => {
+      const palette = new OneBitPalette(new Grayscale(0xFF), new Grayscale(0));
 
-      const dark = new GrayscaleColor(0x40);
-      const light = new GrayscaleColor(0xB0);
+      const dark = new Grayscale(0x40);
+      const light = new Grayscale(0xB0);
 
       test.each([
         [dark, 0xFF, 0xFF, 0xFF, 0xFF],
