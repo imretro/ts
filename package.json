@@ -35,6 +35,7 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "@imretro/bitio": "^0.1.5"
+    "@imretro/bitio": "^0.1.5",
+    "@imretro/color": "^0.1.1"
   }
 }

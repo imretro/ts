@@ -1,4 +1,4 @@
-import type Color from './color';
+import type { Color } from '@imretro/color';
 import { PixelMode } from './flags';
 import type { ColorCount } from './util';
 

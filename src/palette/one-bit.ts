@@ -1,4 +1,4 @@
-import Color from '../color';
+import { Color } from '@imretro/color';
 import { PixelMode } from '../flags';
 import Palette from './index';
 import type { ColorList, OneBitColors } from './index';
