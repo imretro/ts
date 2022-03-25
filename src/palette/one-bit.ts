@@ -1,6 +1,6 @@
 import { Color } from '@imretro/color';
 import { PixelMode } from '../flags';
-import Palette from './index';
+import Palette from './palette';
 import type { ColorList, OneBitColors } from './index';
 
 export default class OneBitPalette extends Palette {
