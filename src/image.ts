@@ -1,8 +1,21 @@
+import type { Color } from '@imretro/color';
+import { Grayscale, RGB, RGBA } from '@imretro/color';
+import type { Palette } from './palette';
 import { Reader as BitReader } from '@imretro/bitio';
 import { DecodeError } from './errors';
+import { OneBit as OneBitPalette } from './palette/one-bit';
 import * as flags from './flags';
+import {
+  unimplemented,
+  unreachable,
+  pixelModeToColors,
+  channelToCount,
+} from './util';
 
 type Dimensions = { x: number, y: number };
+type GrayTuple = [number];
+type RGBTuple = [number, number, number];
+type RGBATuple = [number, number, number, number];
 
 export default class Image {
   public static readonly signature = 'IMRETRO';
@@ -19,6 +32,8 @@ export default class Image {
 
   public readonly height: number;
 
+  public readonly palette: Palette;
+
   private constructor(bytes: ArrayBuffer) {
     const signature = new Uint8Array(bytes, 0, 7);
     if (!Image.validateSignature(signature)) {
@@ -33,6 +48,16 @@ export default class Image {
     const dimensions = Image.decodeDimensions(new Uint8Array(bytes, 8, 3));
     this.width = dimensions.x;
     this.height = dimensions.y;
+    if (this.paletteIncluded === flags.PaletteIncluded.Yes) {
+      this.palette = Image.decodePalette(
+        new BitReader(new Uint8Array(bytes, 11)),
+        this.pixelMode,
+        this.colorChannels,
+        this.colorAccuracy,
+      );
+    } else {
+      this.palette = unimplemented();
+    }
   }
 
   public static validateSignature(signature: ArrayBuffer | Uint8Array | string): boolean {
@@ -55,6 +80,68 @@ export default class Image {
     const x = reader.readBits(12);
     const y = reader.readBits(12);
     return { x, y };
+  }
+
+  private static decodePalette(
+    reader: BitReader,
+    pixelMode: flags.PixelMode,
+    channels: flags.ColorChannels,
+    accuracy: flags.ColorAccuracy,
+  ): Palette {
+    let bitsPerChannel: Readonly<number>;
+    const colors: Color[] = [];
+    const colorCount = pixelModeToColors(pixelMode);
+    const channelCount = channelToCount(channels);
+
+    switch (accuracy) {
+      case flags.ColorAccuracy.TwoBit:
+        bitsPerChannel = 2;
+        break;
+      case flags.ColorAccuracy.EightBit:
+        bitsPerChannel = 8;
+        break;
+      default:
+        return unreachable();
+    }
+
+    for (let i = 0; i < colorCount; i += 1) {
+      const colorChannels: number[] = [];
+      for (let j = 0; j < channelCount; j += 1) {
+        let channel = reader.readBits(bitsPerChannel);
+        switch (bitsPerChannel) {
+          case 2:
+            channel |= channel << 2;
+            channel |= channel << 4;
+            break;
+          case 8:
+            break;
+          default:
+            return unreachable();
+        }
+        colorChannels.push(channel);
+      }
+
+      switch (channels) {
+        case flags.ColorChannels.Grayscale:
+          colors.push(new Grayscale(...(colorChannels as GrayTuple)));
+          break;
+        case flags.ColorChannels.RGB:
+          colors.push(new RGB(...(colorChannels as RGBTuple)));
+          break;
+        case flags.ColorChannels.RGBA:
+          colors.push(new RGBA(...(colorChannels as RGBATuple)));
+          break;
+        default:
+          return unreachable();
+      }
+    }
+
+    switch (pixelMode) {
+      case flags.PixelMode.OneBit:
+        return new OneBitPalette(colors);
+      default:
+        return unimplemented();
+    }
   }
 
   public static decode(bytes: ArrayBuffer): Image {
