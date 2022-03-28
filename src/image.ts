@@ -4,7 +4,7 @@ import type { Palette } from './palette';
 import { Reader as BitReader } from '@imretro/bitio';
 import { unimplemented, unreachable } from 'logic-branch-helpers';
 import { DecodeError } from './errors';
-import { OneBit as OneBitPalette } from './palette/one-bit';
+import OneBitPalette from './palette/one-bit';
 import * as flags from './flags';
 import {
   pixelModeToColors,
@@ -135,9 +135,11 @@ export default class Image {
       }
     }
 
+    // NOTE Length of color is known by `pixelMode` because it determines
+    // `colorCount`, which sets how many times `colors` is pushed.
     switch (pixelMode) {
       case flags.PixelMode.OneBit:
-        return new OneBitPalette(colors);
+        return new OneBitPalette(colors as [Color, Color]);
       default:
         return unimplemented(`Pixel mode ${pixelMode}`);
     }
