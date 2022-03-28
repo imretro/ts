@@ -17,7 +17,6 @@ export interface EightBitColors extends PaletteColors {
 }
 
 export type ColorList = OneBitColors | TwoBitColors | EightBitColors;
-export type ColorListValidator = (list: Color[]) => list is ColorList;
 
 export default abstract class Palette {
   public abstract readonly colors: ColorList;
