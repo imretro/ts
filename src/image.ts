@@ -1,10 +1,10 @@
 import type { Color } from '@imretro/color';
 import { Grayscale, RGB, RGBA } from '@imretro/color';
-import type { Palette } from './palette';
 import { Reader as BitReader } from '@imretro/bitio';
 import { unimplemented, unreachable } from 'logic-branch-helpers';
-import { DecodeError } from './errors';
+import type { Palette } from './palette';
 import OneBitPalette from './palette/one-bit';
+import { DecodeError } from './errors';
 import * as flags from './flags';
 import {
   pixelModeToColors,
