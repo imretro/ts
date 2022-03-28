@@ -39,11 +39,11 @@ describe('decode', () => {
   test('read mode byte', () => {
     const buff = new ArrayBuffer(20);
     addSignature(buff);
-    const modeByteView = new Uint8Array(buff, 7, 1);
-    modeByteView[0] = PixelMode.EightBit
+    setMode(buff, PixelMode.EightBit
       | PaletteIncluded.Yes
       | ColorChannels.RGB
-      | ColorAccuracy.EightBit;
+      | ColorAccuracy.EightBit
+    );
 
     const m = Image.decode(buff);
 
@@ -72,4 +72,9 @@ function addSignature(buff: ArrayBuffer, signature = 'IMRETRO'): void {
   for (let i = 0; i < signature.length; ++i) {
     view[i] = signature.charCodeAt(i);
   }
+}
+
+function setMode(buff: ArrayBuffer, mode: number): void {
+  const view = new Uint8Array(buff, 7, 1);
+  view[0] = mode;
 }
