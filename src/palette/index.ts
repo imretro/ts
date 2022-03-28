@@ -3,7 +3,6 @@ import OneBit from './one-bit';
 import TwoBit from './two-bit';
 import EightBit from './eight-bit';
 
-export * from './palette';
 export { default as Palette } from './palette';
 export { default as OneBit } from './one-bit';
 export { default as TwoBit } from './two-bit';
