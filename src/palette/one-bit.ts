@@ -1,22 +1,24 @@
 import { Color } from '@imretro/color';
 import { PixelMode } from '../flags';
 import Palette from './palette';
-import type { ColorList, OneBitColors } from './index';
+
+const isColor = (v: unknown): v is Color => v instanceof Color;
 
 export default class OneBitPalette extends Palette {
-  public readonly colors: ColorList;
+  public readonly colors: Color[];
 
   public readonly pixelMode: PixelMode = PixelMode.OneBit;
 
   constructor(off: Color, on: Color);
   constructor(colors: [Color, Color]);
-  constructor(off: Color | [Color, Color], on?: Color) {
+  constructor(colors: Color[]);
+  constructor(off: Color | Color[], on?: Color) {
     super();
-    if (off instanceof Color && on instanceof Color) {
-      this.colors = [off, on] as OneBitColors;
+    if (isColor(off)) {
+      this.colors = [off, on as Color];
       return;
     }
-    this.colors = off as OneBitColors;
+    this.colors = off;
   }
 
   // eslint-disable-next-line class-methods-use-this

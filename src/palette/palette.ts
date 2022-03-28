@@ -2,27 +2,12 @@ import type { Color } from '@imretro/color';
 import { Alpha } from '@imretro/color';
 import { PixelMode } from '../flags';
 import type { ColorCount } from '../util';
-
-export type PaletteColors = Array<Color>;
-
-export interface OneBitColors extends PaletteColors {
-  length: 2;
-}
-
-export interface TwoBitColors extends PaletteColors {
-  length: 4;
-}
-
-export interface EightBitColors extends PaletteColors {
-  length: 256;
-}
-
-export type ColorList = OneBitColors | TwoBitColors | EightBitColors;
+import { pixelModeToColors as toColorCount } from '../util';
 
 const noColor = new Alpha(0);
 
 export default abstract class Palette {
-  public abstract readonly colors: ColorList;
+  public abstract readonly colors: Color[];
 
   public abstract readonly pixelMode: PixelMode;
 
@@ -30,7 +15,7 @@ export default abstract class Palette {
    * @returns A count of available colors.
    */
   public get colorCount(): ColorCount {
-    return this.colors.length;
+    return toColorCount(this.pixelMode);
   }
 
   /**

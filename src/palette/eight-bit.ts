@@ -1,16 +1,15 @@
 import { Color } from '@imretro/color';
 import { PixelMode } from '../flags';
 import Palette from './palette';
-import type { ColorList, EightBitColors } from './index';
 
 export default class EightBitPalette extends Palette {
-  public readonly colors: ColorList;
+  public readonly colors: Color[];
 
   public readonly pixelMode: PixelMode = PixelMode.EightBit;
 
   constructor(colors: Color[]) {
     super();
-    this.colors = colors as EightBitColors;
+    this.colors = colors;
   }
 
   // eslint-disable-next-line class-methods-use-this
