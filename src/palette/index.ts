@@ -6,6 +6,8 @@ import EightBit from './eight-bit';
 export * from './palette';
 export { default as Palette } from './palette';
 export { default as OneBit } from './one-bit';
+export { default as TwoBit } from './two-bit';
+export { default as EightBit } from './eight-bit';
 
 /**
  * The default 1-bit pixel-mode palette.

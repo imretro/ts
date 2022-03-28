@@ -1,7 +1,7 @@
 import type { Color } from '@imretro/color';
 import { Grayscale, RGB, RGBA } from '@imretro/color';
 import { Reader as BitReader } from '@imretro/bitio';
-import { unimplemented, unreachable } from 'logic-branch-helpers';
+import { unreachable } from 'logic-branch-helpers';
 import type { Palette } from './palette';
 import * as palette from './palette';
 import { DecodeError } from './errors';
@@ -140,8 +140,12 @@ export default class Image {
     switch (pixelMode) {
       case flags.PixelMode.OneBit:
         return new palette.OneBit(colors as [Color, Color]);
+      case flags.PixelMode.TwoBit:
+        return new palette.TwoBit(colors as [Color, Color, Color, Color]);
+      case flags.PixelMode.EightBit:
+        return new palette.EightBit(colors);
       default:
-        return unimplemented(`Pixel mode ${pixelMode}`);
+        return unreachable(`Pixel mode ${pixelMode}`);
     }
   }
 
