@@ -67,9 +67,9 @@ describe('decode', () => {
   });
 });
 
-function addSignature(buff: ArrayBuffer, signature: string = 'IMRETRO'): void {
+function addSignature(buff: ArrayBuffer, signature = 'IMRETRO'): void {
   const view = new Uint8Array(buff);
   for (let i = 0; i < signature.length; ++i) {
     view[i] = signature.charCodeAt(i);
   }
-};
+}
