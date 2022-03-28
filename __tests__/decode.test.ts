@@ -1,8 +1,10 @@
-import { Grayscale } from '@imretro/color';
+import * as color from '@imretro/color';
 import { Image } from '../src/index';
 import {
   Palette,
   OneBit as OneBitPalette,
+  TwoBit as TwoBitPalette,
+  EightBit as EightBitPalette,
 } from '../src/palette';
 import * as palette from '../src/palette';
 import {
@@ -90,7 +92,54 @@ describe('decode', () => {
         'Grayscale',
         'TwoBit',
         [0b1100_0000],
-        new OneBitPalette(new Grayscale(0xFF), new Grayscale(0)),
+        new OneBitPalette(new color.Grayscale(0xFF), new color.Grayscale(0)),
+      ],
+      [
+        'OneBit',
+        'RGB',
+        'TwoBit',
+        [0b110011_11, 0b1000_0000],
+        new OneBitPalette(new color.RGB(0xFF, 0, 0xFF), new color.RGB(0xFF, 0xAA, 0)),
+      ],
+      [
+        'OneBit',
+        'RGBA',
+        'TwoBit',
+        [0b00011011, 0b11001110],
+        new OneBitPalette(new color.RGBA(0, 0x55, 0xAA, 0xFF), new color.RGBA(0xFF, 0, 0xFF, 0xAA)),
+      ],
+      [
+        'OneBit',
+        'Grayscale',
+        'EightBit',
+        [0x55, 0xAA],
+        new OneBitPalette(new color.Grayscale(0x55), new color.Grayscale(0xAA)),
+      ],
+      [
+        'TwoBit',
+        'RGB',
+        'EightBit',
+        [
+          0xFF, 0, 0,
+          0, 0xFF, 0,
+          0, 0, 0xFF,
+          0xFF, 0xFF, 0xFF,
+        ],
+        new TwoBitPalette(
+          new color.RGB(0xFF, 0, 0),
+          new color.RGB(0, 0xFF, 0),
+          new color.RGB(0, 0, 0xFF),
+          new color.RGB(0xFF, 0xFF, 0xFF),
+        ),
+      ],
+      [
+        'EightBit',
+        'Grayscale',
+        'EightBit',
+        Array.from({ length: 0x100 }).map((_, index) => 0xFF - index),
+        new EightBitPalette(
+          Array.from({ length: 0x100 }).map((_, index) => new color.Grayscale(0xFF - index)),
+        ),
       ],
     ])('[%#] PixelMode.%s ColorChannels.%s ColorAccuracy.%s', (
       pixelMode: string,
