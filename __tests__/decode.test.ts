@@ -39,7 +39,7 @@ describe('static methods', () => {
       ['TwoBit', palette.default2Bit],
     ])('PixelMode.%s', (pixelModeFlag, want) => {
       const pixelMode = PixelMode[pixelModeFlag as keyof typeof PixelMode];
-      expect(Image.defaultPalette(pixelMode)).toEqual(want);
+      expect(Image.defaultPalette(pixelMode)).toBe(want);
     });
   });
 });
