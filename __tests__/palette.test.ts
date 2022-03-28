@@ -1,4 +1,4 @@
-import { OneBitPalette } from '../src/index';
+import OneBitPalette from '../src/palette/one-bit';
 import { Grayscale } from '@imretro/color';
 
 describe('Palette', () => {
