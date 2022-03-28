@@ -149,6 +149,8 @@ export default class Image {
     switch (pixelMode) {
       case flags.PixelMode.OneBit:
         return palette.default1Bit;
+      case flags.PixelMode.TwoBit:
+        return palette.default2Bit;
       default:
         return unimplemented(`Pixel mode ${pixelMode}`);
     }
