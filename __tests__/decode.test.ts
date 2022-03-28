@@ -4,6 +4,7 @@ import {
   Palette,
   OneBit as OneBitPalette,
 } from '../src/palette';
+import * as palette from '../src/palette';
 import {
   PixelMode,
   PaletteIncluded,
@@ -11,7 +12,7 @@ import {
   ColorAccuracy,
 } from '../src/flags';
 
-describe('utilities', () => {
+describe('static methods', () => {
   describe('validateSignature', () => {
     const buff = new ArrayBuffer(7);
     const view = new Uint8Array(buff);
@@ -29,6 +30,15 @@ describe('utilities', () => {
     });
     test('string', () => {
       expect(Image.validateSignature(signature)).toBe(true);
+    });
+  });
+
+  describe('defaultPalette', () => {
+    test.each([
+      ['OneBit', palette.default1Bit],
+    ])('PixelMode.%s', (pixelModeFlag, want) => {
+      const pixelMode = PixelMode[pixelModeFlag as keyof typeof PixelMode];
+      expect(Image.defaultPalette(pixelMode)).toEqual(want);
     });
   });
 });

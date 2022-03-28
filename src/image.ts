@@ -3,7 +3,7 @@ import { Grayscale, RGB, RGBA } from '@imretro/color';
 import { Reader as BitReader } from '@imretro/bitio';
 import { unimplemented, unreachable } from 'logic-branch-helpers';
 import type { Palette } from './palette';
-import OneBitPalette from './palette/one-bit';
+import * as palette from './palette';
 import { DecodeError } from './errors';
 import * as flags from './flags';
 import {
@@ -55,7 +55,7 @@ export default class Image {
         this.colorAccuracy,
       );
     } else {
-      this.palette = unimplemented('Default palettes');
+      this.palette = Image.defaultPalette(this.pixelMode);
     }
   }
 
@@ -139,7 +139,16 @@ export default class Image {
     // `colorCount`, which sets how many times `colors` is pushed.
     switch (pixelMode) {
       case flags.PixelMode.OneBit:
-        return new OneBitPalette(colors as [Color, Color]);
+        return new palette.OneBit(colors as [Color, Color]);
+      default:
+        return unimplemented(`Pixel mode ${pixelMode}`);
+    }
+  }
+
+  public static defaultPalette(pixelMode: flags.PixelMode): Palette {
+    switch (pixelMode) {
+      case flags.PixelMode.OneBit:
+        return palette.default1Bit;
       default:
         return unimplemented(`Pixel mode ${pixelMode}`);
     }
