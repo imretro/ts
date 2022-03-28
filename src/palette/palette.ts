@@ -1,4 +1,5 @@
 import type { Color } from '@imretro/color';
+import { Alpha } from '@imretro/color';
 import { PixelMode } from '../flags';
 import type { ColorCount } from '../util';
 
@@ -18,6 +19,8 @@ export interface EightBitColors extends PaletteColors {
 
 export type ColorList = OneBitColors | TwoBitColors | EightBitColors;
 
+const noColor = new Alpha(0);
+
 export default abstract class Palette {
   public abstract readonly colors: ColorList;
 
@@ -36,7 +39,7 @@ export default abstract class Palette {
    * @returns One of the available colors in the palette.
    */
   public convert(color: Color): Color {
-    return this.colors[this.toIndex(color)];
+    return this.colors[this.toIndex(color)] ?? noColor;
   }
 
   protected abstract toIndex(color: Color): number;
