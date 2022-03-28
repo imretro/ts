@@ -1,4 +1,9 @@
+import { Grayscale } from '@imretro/color';
 import { Image } from '../src/index';
+import {
+  Palette,
+  OneBit as OneBitPalette,
+} from '../src/palette';
 import {
   PixelMode,
   PaletteIncluded,
@@ -65,6 +70,34 @@ describe('decode', () => {
     expect(m.width).toBe(0x012);
     expect(m.height).toBe(0x024);
   });
+
+  describe('encoded pixels', () => {
+    test.each([
+      [
+        'OneBit',
+        'Grayscale',
+        'TwoBit',
+        [0b1100_0000],
+        new OneBitPalette(new Grayscale(0xFF), new Grayscale(0)),
+      ],
+    ])('[%#] PixelMode.%s ColorChannels.%s ColorAccuracy.%s', (
+      pixelMode: string,
+      channels: string,
+      accuracy: string,
+      paletteBytes: number[],
+      want: Palette,
+    ) => {
+      const buff = new ArrayBuffer(1024);
+      addSignature(buff);
+      setMode(buff, PixelMode[pixelMode as keyof typeof PixelMode]
+        | PaletteIncluded.Yes
+        | ColorChannels[channels as keyof typeof ColorChannels]
+        | ColorAccuracy[accuracy as keyof typeof ColorAccuracy]);
+      setPalette(buff, paletteBytes);
+      const m = Image.decode(buff);
+      expect(m.palette).toEqual(want);
+    });
+  });
 });
 
 function addSignature(buff: ArrayBuffer, signature = 'IMRETRO'): void {
@@ -77,4 +110,12 @@ function addSignature(buff: ArrayBuffer, signature = 'IMRETRO'): void {
 function setMode(buff: ArrayBuffer, mode: number): void {
   const view = new Uint8Array(buff, 7, 1);
   view[0] = mode;
+}
+
+// TODO Throw if palette included flag is not set
+function setPalette(buff: ArrayBuffer, bytes: number[]): void {
+  const view = new Uint8Array(buff, 11);
+  bytes.forEach((b, index) => {
+    view[index] = b;
+  });
 }
