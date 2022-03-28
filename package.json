@@ -1,6 +1,6 @@
 {
   "name": "@imretro/imretro",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Decoding and encoding of the imretro image format",
   "main": "dist/index.js",
   "scripts": {
