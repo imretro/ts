@@ -151,8 +151,10 @@ export default class Image {
         return palette.default1Bit;
       case flags.PixelMode.TwoBit:
         return palette.default2Bit;
+      case flags.PixelMode.EightBit:
+        return palette.default8Bit;
       default:
-        return unimplemented(`Pixel mode ${pixelMode}`);
+        return unreachable(`Pixel mode ${pixelMode}`);
     }
   }
 
