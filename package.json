@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@imretro/bitio": "^0.1.5",
-    "@imretro/color": "^0.1.1"
+    "@imretro/color": "^0.1.1",
+    "logic-branch-helpers": "^1.0.1"
   }
 }

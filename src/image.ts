@@ -2,12 +2,11 @@ import type { Color } from '@imretro/color';
 import { Grayscale, RGB, RGBA } from '@imretro/color';
 import type { Palette } from './palette';
 import { Reader as BitReader } from '@imretro/bitio';
+import { unimplemented, unreachable } from 'logic-branch-helpers';
 import { DecodeError } from './errors';
 import { OneBit as OneBitPalette } from './palette/one-bit';
 import * as flags from './flags';
 import {
-  unimplemented,
-  unreachable,
   pixelModeToColors,
   channelToCount,
 } from './util';
@@ -56,7 +55,7 @@ export default class Image {
         this.colorAccuracy,
       );
     } else {
-      this.palette = unimplemented();
+      this.palette = unimplemented('Default palettes');
     }
   }
 
@@ -140,7 +139,7 @@ export default class Image {
       case flags.PixelMode.OneBit:
         return new OneBitPalette(colors);
       default:
-        return unimplemented();
+        return unimplemented(`Pixel mode ${pixelMode}`);
     }
   }
 

@@ -50,17 +50,3 @@ export const channelToCount = (channels: ColorChannels): ChannelCount => {
       return undefined as never;
   }
 };
-
-/**
- * @private
- */
-export const unreachable = (): never => {
-  throw new Error('Unreachable');
-};
-
-/**
- * @private
- */
-export const unimplemented = (): never => {
-  throw new Error('Not implemented');
-};
