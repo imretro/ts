@@ -37,7 +37,7 @@ describe('decode', () => {
   });
 
   test('read mode byte', () => {
-    const buff = new ArrayBuffer(20);
+    const buff = new ArrayBuffer(1024);
     addSignature(buff);
     setMode(buff, PixelMode.EightBit
       | PaletteIncluded.Yes
