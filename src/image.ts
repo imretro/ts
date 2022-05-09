@@ -34,22 +34,24 @@ export default class Image {
   public readonly palette: Palette;
 
   private constructor(bytes: ArrayBuffer) {
-    const signature = new Uint8Array(bytes, 0, 7);
-    if (!Image.validateSignature(signature)) {
-      throw new DecodeError('Invalid signature', signature);
+    const reader = new BitReader(new Uint8Array(bytes));
+    if (!Image.validateSignature(reader)) {
+      throw new DecodeError('Invalid signature', new Uint8Array(bytes, 0, 7));
     }
-    const modeByteReader = new Uint8Array(bytes, 7, 1);
-    const mode: number = modeByteReader[0];
+    const mode = reader.readBits(8);
+    if (mode == null) {
+      throw new DecodeError('Missing mode byte');
+    }
     this.pixelMode = flags.getPixelModeFlag(mode);
     this.paletteIncluded = flags.getPaletteIncludedFlag(mode);
     this.colorChannels = flags.getColorChannelFlag(mode);
     this.colorAccuracy = flags.getColorAccuracyFlag(mode);
-    const dimensions = Image.decodeDimensions(new Uint8Array(bytes, 8, 3));
+    const dimensions = Image.decodeDimensions(reader);
     this.width = dimensions.x;
     this.height = dimensions.y;
     if (this.paletteIncluded === flags.PaletteIncluded.Yes) {
       this.palette = Image.decodePalette(
-        new BitReader(new Uint8Array(bytes, 11)),
+        reader,
         this.pixelMode,
         this.colorChannels,
         this.colorAccuracy,
@@ -59,10 +61,18 @@ export default class Image {
     }
   }
 
-  public static validateSignature(signature: ArrayBuffer | Uint8Array | string): boolean {
+  public static validateSignature(
+    signature: ArrayBuffer | Uint8Array | string | BitReader,
+  ): boolean {
     let s: string;
 
-    if (signature instanceof ArrayBuffer) {
+    if (signature instanceof BitReader) {
+      const charCodes: number[] = new Array(7);
+      for (let i = 0; i < 7; i += 1) {
+        charCodes[i] = signature.readBits(8);
+      }
+      s = String.fromCharCode(...charCodes);
+    } else if (signature instanceof ArrayBuffer) {
       const bytes = new Uint8Array(signature);
       s = String.fromCharCode(...bytes);
     } else if (signature instanceof Uint8Array) {
@@ -74,8 +84,7 @@ export default class Image {
     return s === Image.signature;
   }
 
-  private static decodeDimensions(bytes: Uint8Array): Dimensions {
-    const reader = new BitReader(bytes);
+  private static decodeDimensions(reader: BitReader): Dimensions {
     const x = reader.readBits(12);
     const y = reader.readBits(12);
     return { x, y };
