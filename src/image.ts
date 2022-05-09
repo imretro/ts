@@ -61,25 +61,12 @@ export default class Image {
     }
   }
 
-  public static validateSignature(
-    signature: ArrayBuffer | Uint8Array | string | BitReader,
-  ): boolean {
-    let s: string;
-
-    if (signature instanceof BitReader) {
-      const charCodes: number[] = new Array(7);
-      for (let i = 0; i < 7; i += 1) {
-        charCodes[i] = signature.readBits(8);
-      }
-      s = String.fromCharCode(...charCodes);
-    } else if (signature instanceof ArrayBuffer) {
-      const bytes = new Uint8Array(signature);
-      s = String.fromCharCode(...bytes);
-    } else if (signature instanceof Uint8Array) {
-      s = String.fromCharCode(...signature);
-    } else {
-      s = signature;
+  private static validateSignature(signature: BitReader): boolean {
+    const charCodes: number[] = new Array(7);
+    for (let i = 0; i < 7; i += 1) {
+      charCodes[i] = signature.readBits(8);
     }
+    const s = String.fromCharCode(...charCodes);
 
     return s === Image.signature;
   }

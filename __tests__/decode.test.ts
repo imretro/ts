@@ -15,26 +15,6 @@ import {
 } from '../src/flags';
 
 describe('static methods', () => {
-  describe('validateSignature', () => {
-    const buff = new ArrayBuffer(7);
-    const view = new Uint8Array(buff);
-    const signature = 'IMRETRO';
-    addSignature(buff);
-    for (let i = 0; i < signature.length; ++i) {
-      view[i] = signature.charCodeAt(i);
-    }
-
-    test('ArrayBuffer', () => {
-      expect(Image.validateSignature(buff)).toBe(true);
-    });
-    test('Uint8Array', () => {
-      expect(Image.validateSignature(view)).toBe(true);
-    });
-    test('string', () => {
-      expect(Image.validateSignature(signature)).toBe(true);
-    });
-  });
-
   describe('defaultPalette', () => {
     test.each([
       ['OneBit', palette.default1Bit],
