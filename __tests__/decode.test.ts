@@ -53,7 +53,7 @@ describe('decode', () => {
   });
 
   test('dimensions', () => {
-    const buff = new ArrayBuffer(20);
+    const buff = new ArrayBuffer(8 + (0x12 * 0x24));
     addSignature(buff);
     const view = new Uint8Array(buff, 8, 3);
     view[0] = 0x01;
