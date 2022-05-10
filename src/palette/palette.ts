@@ -28,4 +28,11 @@ export default abstract class Palette {
   }
 
   protected abstract toIndex(color: Color): number;
+
+  /**
+   * Allows indexing into a palette.
+   */
+  public color(index: number): Color {
+    return this.colors[index] ?? noColor;
+  }
 }

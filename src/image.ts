@@ -66,6 +66,11 @@ export default class Image {
     this.pixels = Image.decodePixels(reader, this.pixelMode, [this.width, this.height]);
   }
 
+  public colorAt(x: number, y: number): Color {
+    const index = (y * this.width) + x;
+    return this.palette.color(this.pixels[index]);
+  }
+
   private static validateSignature(signature: BitReader): boolean {
     const charCodes = signature.readBytes(7).filter((b: number | null): b is number => b != null);
     const s = String.fromCharCode(...charCodes);
