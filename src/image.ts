@@ -38,14 +38,9 @@ export default class Image {
     if (!Image.validateSignature(reader)) {
       throw new DecodeError('Invalid signature', new Uint8Array(bytes, 0, 7));
     }
-    let mode: number;
-    try {
-      mode = reader.readByte();
-    } catch (e) {
-      if (e instanceof RangeError) {
-        throw new DecodeError('Missing mode byte');
-      }
-      throw e;
+    const mode = reader.readByte();
+    if (mode == null) {
+      throw new DecodeError('Missing mode byte');
     }
     this.pixelMode = flags.getPixelModeFlag(mode);
     this.paletteIncluded = flags.getPaletteIncludedFlag(mode);
@@ -67,15 +62,7 @@ export default class Image {
   }
 
   private static validateSignature(signature: BitReader): boolean {
-    let charCodes: number[];
-    try {
-      charCodes = signature.readBytes(7);
-    } catch (e) {
-      if (e instanceof RangeError) {
-        return false;
-      }
-      throw e;
-    }
+    const charCodes = signature.readBytes(7).filter((b: number | null): b is number => b != null);
     const s = String.fromCharCode(...charCodes);
 
     return s === Image.signature;
