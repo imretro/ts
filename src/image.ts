@@ -1,3 +1,4 @@
+import type { Bit } from '@imretro/bitio';
 import type { Color } from '@imretro/color';
 import { Grayscale, RGB, RGBA } from '@imretro/color';
 import { Reader as BitReader } from '@imretro/bitio';
@@ -33,6 +34,9 @@ export default class Image {
 
   public readonly palette: Palette;
 
+  // NOTE Numbers correspond to indices into the palette.
+  private readonly pixels: number[];
+
   private constructor(bytes: ArrayBuffer) {
     const reader = new BitReader(new Uint8Array(bytes));
     if (!Image.validateSignature(reader)) {
@@ -59,6 +63,7 @@ export default class Image {
     } else {
       this.palette = Image.defaultPalette(this.pixelMode);
     }
+    this.pixels = Image.decodePixels(reader, this.pixelMode, [this.width, this.height]);
   }
 
   private static validateSignature(signature: BitReader): boolean {
@@ -153,6 +158,40 @@ export default class Image {
       default:
         return unreachable(`Pixel mode ${pixelMode}`);
     }
+  }
+
+  private static decodePixels(
+    reader: BitReader,
+    pixelMode: flags.PixelMode,
+    dimensions: [width: number, height: number],
+  ): number[] {
+    let bitsPerPixel: number;
+    switch (pixelMode) {
+      case flags.PixelMode.OneBit:
+        bitsPerPixel = 1;
+        break;
+      case flags.PixelMode.TwoBit:
+        bitsPerPixel = 2;
+        break;
+      case flags.PixelMode.EightBit:
+        bitsPerPixel = 8;
+        break;
+      default:
+        return unreachable();
+    }
+
+    const pixels: number[] = new Array(dimensions[0] * dimensions[1]);
+
+    for (let i = 0; i < pixels.length; i += 1) {
+      const bits = reader.readBitsSafe(bitsPerPixel);
+      const noNulls: Bit[] = bits.filter((b: Bit | null): b is Bit => b != null);
+      if (noNulls.length !== bits.length) {
+        throw new DecodeError('Not enough bits to parse for pixels');
+      }
+      pixels[i] = BitReader.collectBits(noNulls);
+    }
+
+    return pixels;
   }
 
   public static decode(bytes: ArrayBuffer): Image {
