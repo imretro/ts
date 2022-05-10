@@ -13,6 +13,7 @@ import {
   ColorChannels,
   ColorAccuracy,
 } from '../src/flags';
+import { DecodeError } from '../src/errors';
 
 describe('static methods', () => {
   describe('defaultPalette', () => {
@@ -173,6 +174,23 @@ describe('decode', () => {
       wantedColors.forEach(([x, y, hex]) => {
         expect(m.colorAt(x, y).hex.toLowerCase()).toBe(hex.toLowerCase());
       });
+    });
+
+    test.each([
+      [PixelMode.OneBit, 12],
+      [PixelMode.TwoBit, 13],
+      [PixelMode.EightBit, 19],
+    ])('3x3 image with pixel mode with pixel mode %d and %d bytes throws', (
+      mode: PixelMode,
+      byteCount: number,
+    ) => {
+      const buff = new ArrayBuffer(byteCount);
+      addSignature(buff);
+      const modeView = new Uint8Array(buff, 8, 1);
+      modeView[0] = mode;
+
+      expect(() => Image.decode(buff))
+        .toThrow(new DecodeError('Not enough bits to parse for pixels'));
     });
   });
 });
