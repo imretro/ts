@@ -15,9 +15,10 @@ export const pixelModeToColors = (mode: PixelMode): ColorCount => {
       return 4;
     case PixelMode.EightBit:
       return 256;
-    /* istanbul ignore next */
+    /* c8 ignore start */
     default:
       return unreachable();
+    /* c8 ignore end */
   }
 };
 
@@ -32,9 +33,10 @@ export const colorsToPixelMode = (colors: ColorCount): PixelMode => {
       return PixelMode.TwoBit;
     case 256:
       return PixelMode.EightBit;
-    /* istanbul ignore next */
+    /* c8 ignore start */
     default:
       return unreachable();
+    /* c8 ignore end */
   }
 };
 
@@ -49,8 +51,9 @@ export const channelToCount = (channels: ColorChannels): ChannelCount => {
       return 3;
     case ColorChannels.RGBA:
       return 4;
-    /* istanbul ignore next */
+    /* c8 ignore start */
     default:
       return unreachable();
+    /* c8 ignore end */
   }
 };

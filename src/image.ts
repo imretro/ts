@@ -102,9 +102,10 @@ export default class Image {
       case flags.ColorAccuracy.EightBit:
         bitsPerChannel = 8;
         break;
-      /* istanbul ignore next */
+      /* c8 ignore start */
       default:
         return unreachable();
+      /* c8 ignore end */
     }
 
     for (let i = 0; i < colorCount; i += 1) {
@@ -118,9 +119,10 @@ export default class Image {
             break;
           case 8:
             break;
-          /* istanbul ignore next */
+          /* c8 ignore start */
           default:
             return unreachable();
+          /* c8 ignore end */
         }
         colorChannels.push(channel);
       }
@@ -135,9 +137,10 @@ export default class Image {
         case flags.ColorChannels.RGBA:
           colors.push(new RGBA(...(colorChannels as RGBATuple)));
           break;
-        /* istanbul ignore next */
+        /* c8 ignore start */
         default:
           return unreachable();
+        /* c8 ignore end */
       }
     }
 
@@ -150,9 +153,10 @@ export default class Image {
         return new palette.TwoBit(colors as [Color, Color, Color, Color]);
       case flags.PixelMode.EightBit:
         return new palette.EightBit(colors);
+      /* c8 ignore start */
       default:
-        /* istanbul ignore next */
         return unreachable(`Pixel mode ${pixelMode}`);
+      /* c8 ignore end */
     }
   }
 
@@ -164,9 +168,10 @@ export default class Image {
         return palette.default2Bit;
       case flags.PixelMode.EightBit:
         return palette.default8Bit;
+      /* c8 ignore start */
       default:
-        /* istanbul ignore next */
         return unreachable(`Pixel mode ${pixelMode}`);
+      /* c8 ignore end */
     }
   }
 
@@ -186,9 +191,10 @@ export default class Image {
       case flags.PixelMode.EightBit:
         bitsPerPixel = 8;
         break;
-      /* istanbul ignore next */
+      /* c8 ignore start */
       default:
         return unreachable();
+      /* c8 ignore end */
     }
 
     const pixels: number[] = new Array(dimensions[0] * dimensions[1]);
