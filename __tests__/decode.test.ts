@@ -214,8 +214,12 @@ describe('decode', () => {
     ) => {
       const buff = new ArrayBuffer(byteCount);
       addSignature(buff);
-      const modeView = new Uint8Array(buff, 8, 1);
+      const modeView = new Uint8Array(buff, 7, 1);
       modeView[0] = mode;
+      const dimensionView = new Uint8Array(buff, 8, 3);
+      dimensionView[0] = 0x00;
+      dimensionView[1] = (3 << 4) | 0x00;
+      dimensionView[2] = (0x0 << 4) | 3;
 
       expect(() => Image.decode(buff))
         .toThrow(new DecodeError('Not enough bits to parse for pixels'));
