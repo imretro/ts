@@ -165,11 +165,11 @@ describe('decode', () => {
           [1, 1, '#FFFFFF'] as const,
         ],
       ],
-    ])('%dx%d image with pixel mode %d and bytes %p', (
+    ])('%dx%d image with pixel mode %d and pixels %p', (
       width: number,
       height: number,
       pixelMode: PixelMode,
-      bytes: number[],
+      pixels: number[],
       wantedColors: Readonly<[x: number, y: number, hex: string]>[],
     ) => {
       const imageBytes = new Uint8Array([
@@ -177,7 +177,7 @@ describe('decode', () => {
         pixelMode,
         // Dimensions
         0x00, (width << 4) | 0x00, height,
-        ...bytes,
+        ...pixels,
       ]);
       const m = Image.decode(imageBytes.buffer);
 
