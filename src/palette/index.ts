@@ -22,7 +22,7 @@ export const default2Bit = new TwoBit(
   new color.Grayscale(0xFF),
 );
 
-type ChannelBits = Readonly<[a: number, b: number, g: number, a: number]>;
+type ChannelBits = Readonly<[r: number, g: number, b: number, a: number]>;
 
 const default8BitColors = Array.from({ length: 256 })
   .map((_, index) => {
