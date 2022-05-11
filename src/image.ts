@@ -102,6 +102,7 @@ export default class Image {
       case flags.ColorAccuracy.EightBit:
         bitsPerChannel = 8;
         break;
+      /* istanbul ignore next */
       default:
         return unreachable();
     }
@@ -117,6 +118,7 @@ export default class Image {
             break;
           case 8:
             break;
+          /* istanbul ignore next */
           default:
             return unreachable();
         }
@@ -133,6 +135,7 @@ export default class Image {
         case flags.ColorChannels.RGBA:
           colors.push(new RGBA(...(colorChannels as RGBATuple)));
           break;
+        /* istanbul ignore next */
         default:
           return unreachable();
       }
@@ -148,6 +151,7 @@ export default class Image {
       case flags.PixelMode.EightBit:
         return new palette.EightBit(colors);
       default:
+        /* istanbul ignore next */
         return unreachable(`Pixel mode ${pixelMode}`);
     }
   }
@@ -161,6 +165,7 @@ export default class Image {
       case flags.PixelMode.EightBit:
         return palette.default8Bit;
       default:
+        /* istanbul ignore next */
         return unreachable(`Pixel mode ${pixelMode}`);
     }
   }
@@ -181,6 +186,7 @@ export default class Image {
       case flags.PixelMode.EightBit:
         bitsPerPixel = 8;
         break;
+      /* istanbul ignore next */
       default:
         return unreachable();
     }
