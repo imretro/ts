@@ -22,13 +22,20 @@ export const default2Bit = new TwoBit(
   new color.Grayscale(0xFF),
 );
 
+type ChannelBits = Readonly<[a: number, b: number, g: number, a: number]>;
+
 const default8BitColors = Array.from({ length: 256 })
-  .map((_, index) => new color.RGBA(
-    index & 0b11,
-    (index >> 2) & 0b11,
-    (index >> 4) & 0b11,
-    (index >> 6),
-  ));
+  .map((_, index) => {
+    const channels2bit: ChannelBits = [
+      index & 0b11,
+      (index >> 2) & 0b11,
+      (index >> 4) & 0b11,
+      (index >> 6),
+    ] as const;
+    const channels4bit = channels2bit.map((c) => c | (c << 2)) as unknown as ChannelBits;
+    const channels = channels4bit.map((c) => c | (c << 4)) as unknown as ChannelBits;
+    return new color.RGBA(...channels);
+  });
 
 /**
  * The default 8-bit pixel-mode palette.
