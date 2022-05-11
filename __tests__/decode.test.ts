@@ -165,6 +165,17 @@ describe('decode', () => {
           [1, 1, '#FFFFFF', 0xFF] as const,
         ],
       ],
+      [
+        2, 2,
+        PixelMode.EightBit,
+        [0b00000000, 0b11110011, 0b00100010, 0xFF],
+        [
+          [0, 0, '#000000', 0x00] as const,
+          [1, 0, '#FFFF00', 0xFF] as const,
+          [0, 1, '#00AA00', 0xAA] as const,
+          [1, 1, '#FFFFFF', 0xFF] as const,
+        ],
+      ],
     ])('%dx%d image with pixel mode %d and pixels %p', (
       width: number,
       height: number,
