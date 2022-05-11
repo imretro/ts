@@ -142,16 +142,16 @@ describe('decode', () => {
   });
 
   describe('pixels', () => {
-    test.each([
+    describe.each([
       [
         2, 2,
         PixelMode.OneBit,
         [0b0110_0000],
         [
-          [0, 0, '#000000'] as const,
-          [1, 0, '#FFFFFF'] as const,
-          [0, 1, '#FFFFFF'] as const,
-          [1, 1, '#000000'] as const,
+          [0, 0, '#000000', 0xFF] as const,
+          [1, 0, '#FFFFFF', 0xFF] as const,
+          [0, 1, '#FFFFFF', 0xFF] as const,
+          [1, 1, '#000000', 0xFF] as const,
         ],
       ],
       [
@@ -159,10 +159,10 @@ describe('decode', () => {
         PixelMode.TwoBit,
         [0b00_01_10_11],
         [
-          [0, 0, '#000000'] as const,
-          [1, 0, '#555555'] as const,
-          [0, 1, '#AAAAAA'] as const,
-          [1, 1, '#FFFFFF'] as const,
+          [0, 0, '#000000', 0xFF] as const,
+          [1, 0, '#555555', 0xFF] as const,
+          [0, 1, '#AAAAAA', 0xFF] as const,
+          [1, 1, '#FFFFFF', 0xFF] as const,
         ],
       ],
     ])('%dx%d image with pixel mode %d and pixels %p', (
@@ -170,7 +170,7 @@ describe('decode', () => {
       height: number,
       pixelMode: PixelMode,
       pixels: number[],
-      wantedColors: Readonly<[x: number, y: number, hex: string]>[],
+      wantedColors: Readonly<[x: number, y: number, hex: string, alpha: number]>[],
     ) => {
       const imageBytes = new Uint8Array([
         ...'IMRETRO'.split('').map((c) => c.charCodeAt(0)),
@@ -181,8 +181,15 @@ describe('decode', () => {
       ]);
       const m = Image.decode(imageBytes.buffer);
 
-      wantedColors.forEach(([x, y, hex]) => {
-        expect(m.colorAt(x, y).hex.toLowerCase()).toBe(hex.toLowerCase());
+      test.each(wantedColors)('Pixel (%d, %d) has hex %s and alpha byte %d', (
+        x: number,
+        y: number,
+        hex: string,
+        alpha: number,
+      ) => {
+        const color = m.colorAt(x, y);
+        expect(color.hex.toLowerCase()).toBe(hex.toLowerCase());
+        expect(color.a).toBe(alpha);
       });
     });
 
