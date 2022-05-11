@@ -168,7 +168,7 @@ describe('decode', () => {
       [
         2, 2,
         PixelMode.EightBit,
-        [0b00000000, 0b11110011, 0b00100010, 0xFF],
+        [0b00000000, 0b11001111, 0b10001000, 0xFF],
         [
           [0, 0, '#000000', 0x00] as const,
           [1, 0, '#FFFF00', 0xFF] as const,
