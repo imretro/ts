@@ -144,8 +144,7 @@ describe('decode', () => {
   describe('pixels', () => {
     test.each([
       [
-        2,
-        2,
+        2, 2,
         PixelMode.OneBit,
         [0b0110_0000],
         [
@@ -153,6 +152,17 @@ describe('decode', () => {
           [1, 0, '#FFFFFF'] as const,
           [0, 1, '#FFFFFF'] as const,
           [1, 1, '#000000'] as const,
+        ],
+      ],
+      [
+        2, 2,
+        PixelMode.TwoBit,
+        [0b00_01_10_11],
+        [
+          [0, 0, '#000000'] as const,
+          [1, 0, '#555555'] as const,
+          [0, 1, '#AAAAAA'] as const,
+          [1, 1, '#FFFFFF'] as const,
         ],
       ],
     ])('%dx%d image with pixel mode %d and bytes %p', (
