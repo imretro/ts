@@ -1,6 +1,7 @@
 import OneBitPalette from '../src/palette/one-bit';
 import TwoBitPalette from '../src/palette/two-bit';
 import EightBitPalette from '../src/palette/eight-bit';
+import * as palette from '../src/palette';
 import * as color from '@imretro/color';
 
 describe('Palette', () => {
@@ -73,5 +74,13 @@ describe('Palette', () => {
         expect(a).toBe(ea);
       });
     });
+  });
+
+  test.each([
+    { name: 'OneBitPalette', value: palette.default1Bit, count: 2 },
+    { name: 'TwoBitPalette', value: palette.default2Bit, count: 4 },
+    { name: 'EightBitPalette', value: palette.default8Bit, count: 256 },
+  ])('colorCount of $name = $count', ({ value, count }) => {
+    expect(value.colorCount).toBe(count);
   });
 });
