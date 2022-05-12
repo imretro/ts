@@ -24,7 +24,7 @@ export default abstract class Palette {
    * @returns One of the available colors in the palette.
    */
   public convert(color: Color): Color {
-    return this.colors[this.toIndex(color)] ?? noColor;
+    return this.colors[this.toIndex(color)];
   }
 
   protected abstract toIndex(color: Color): number;
