@@ -1,1 +1,3 @@
-export default (n: number): number => n + 2;
+export { default as Image } from './image';
+export * from './errors';
+export * from './flags';
