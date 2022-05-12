@@ -37,7 +37,7 @@ export default class Image {
   // NOTE Numbers correspond to indices into the palette.
   private readonly pixels: number[];
 
-  private constructor(bytes: ArrayBuffer) {
+  public constructor(bytes: ArrayBuffer) {
     const reader = new BitReader(new Uint8Array(bytes));
     if (!Image.validateSignature(reader)) {
       throw new DecodeError('Invalid signature', new Uint8Array(bytes, 0, 7));
