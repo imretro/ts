@@ -76,6 +76,12 @@ describe('Palette', () => {
     });
   });
 
+  describe('color', () => {
+    test('should return no color when attempting to index outside of available colors', () => {
+      expect(palette.default1Bit.color(2)).toEqual(new color.Alpha(0));
+    });
+  });
+
   test.each([
     { name: 'OneBitPalette', value: palette.default1Bit, count: 2 },
     { name: 'TwoBitPalette', value: palette.default2Bit, count: 4 },
