@@ -36,6 +36,13 @@ describe('decode', () => {
     expect(() => Image.decode(buff)).toThrow();
   });
 
+  test('error on missing mode byte', () => {
+    const buff = new ArrayBuffer(7);
+    addSignature(buff);
+
+    expect(() => Image.decode(buff)).toThrow(new DecodeError('Missing mode byte'));
+  });
+
   test('read mode byte', () => {
     const buff = new ArrayBuffer(1024);
     addSignature(buff);
