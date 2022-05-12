@@ -4,7 +4,7 @@ import { Grayscale, RGB, RGBA } from '@imretro/color';
 import { Reader as BitReader } from '@imretro/bitio';
 import { unreachable } from 'logic-branch-helpers';
 import type { Palette } from './palette';
-import * as palette from './palette';
+import * as palettes from './palette';
 import { DecodeError } from './errors';
 import * as flags from './flags';
 import {
@@ -17,6 +17,13 @@ type GrayTuple = [number];
 type RGBTuple = [number, number, number];
 type RGBATuple = [number, number, number, number];
 
+export type Mode = number | [
+  flags.PixelMode,
+  flags.PaletteIncluded,
+  flags.ColorChannels,
+  flags.ColorAccuracy,
+];
+
 export default class Image {
   public static readonly signature = 'IMRETRO';
 
@@ -28,42 +35,21 @@ export default class Image {
 
   public readonly colorAccuracy: flags.ColorAccuracy;
 
-  public readonly width: number;
-
-  public readonly height: number;
-
-  public readonly palette: Palette;
-
-  // NOTE Numbers correspond to indices into the palette.
-  private readonly pixels: number[];
-
-  public constructor(bytes: ArrayBuffer) {
-    const reader = new BitReader(new Uint8Array(bytes));
-    if (!Image.validateSignature(reader)) {
-      throw new DecodeError('Invalid signature', new Uint8Array(bytes, 0, 7));
-    }
-    const mode = reader.readByte();
-    if (mode == null) {
-      throw new DecodeError('Missing mode byte');
-    }
-    this.pixelMode = flags.getPixelModeFlag(mode);
-    this.paletteIncluded = flags.getPaletteIncludedFlag(mode);
-    this.colorChannels = flags.getColorChannelFlag(mode);
-    this.colorAccuracy = flags.getColorAccuracyFlag(mode);
-    const dimensions = Image.decodeDimensions(reader);
-    this.width = dimensions.x;
-    this.height = dimensions.y;
-    if (this.paletteIncluded === flags.PaletteIncluded.Yes) {
-      this.palette = Image.decodePalette(
-        reader,
-        this.pixelMode,
-        this.colorChannels,
-        this.colorAccuracy,
-      );
+  public constructor(
+    mode: Mode,
+    public readonly width: number,
+    public readonly height: number,
+    public readonly palette: Palette,
+    private readonly pixels: number[],
+  ) {
+    if (typeof mode === 'number') {
+      this.pixelMode = flags.getPixelModeFlag(mode);
+      this.paletteIncluded = flags.getPaletteIncludedFlag(mode);
+      this.colorChannels = flags.getColorChannelFlag(mode);
+      this.colorAccuracy = flags.getColorAccuracyFlag(mode);
     } else {
-      this.palette = Image.defaultPalette(this.pixelMode);
+      [this.pixelMode, this.paletteIncluded, this.colorChannels, this.colorAccuracy] = mode;
     }
-    this.pixels = Image.decodePixels(reader, this.pixelMode, [this.width, this.height]);
   }
 
   public colorAt(x: number, y: number): Color {
@@ -148,11 +134,11 @@ export default class Image {
     // `colorCount`, which sets how many times `colors` is pushed.
     switch (pixelMode) {
       case flags.PixelMode.OneBit:
-        return new palette.OneBit(colors as [Color, Color]);
+        return new palettes.OneBit(colors as [Color, Color]);
       case flags.PixelMode.TwoBit:
-        return new palette.TwoBit(colors as [Color, Color, Color, Color]);
+        return new palettes.TwoBit(colors as [Color, Color, Color, Color]);
       case flags.PixelMode.EightBit:
-        return new palette.EightBit(colors);
+        return new palettes.EightBit(colors);
       /* c8 ignore start */
       default:
         return unreachable(`Pixel mode ${pixelMode}`);
@@ -163,11 +149,11 @@ export default class Image {
   public static defaultPalette(pixelMode: flags.PixelMode): Palette {
     switch (pixelMode) {
       case flags.PixelMode.OneBit:
-        return palette.default1Bit;
+        return palettes.default1Bit;
       case flags.PixelMode.TwoBit:
-        return palette.default2Bit;
+        return palettes.default2Bit;
       case flags.PixelMode.EightBit:
-        return palette.default8Bit;
+        return palettes.default8Bit;
       /* c8 ignore start */
       default:
         return unreachable(`Pixel mode ${pixelMode}`);
@@ -212,6 +198,33 @@ export default class Image {
   }
 
   public static decode(bytes: ArrayBuffer): Image {
-    return new Image(bytes);
+    const reader = new BitReader(new Uint8Array(bytes));
+    if (!Image.validateSignature(reader)) {
+      throw new DecodeError('Invalid signature', new Uint8Array(bytes, 0, 7));
+    }
+    const mode = reader.readByte();
+    if (mode == null) {
+      throw new DecodeError('Missing mode byte');
+    }
+    const pixelMode = flags.getPixelModeFlag(mode);
+    const paletteIncluded = flags.getPaletteIncludedFlag(mode);
+    const colorChannels = flags.getColorChannelFlag(mode);
+    const colorAccuracy = flags.getColorAccuracyFlag(mode);
+    const dimensions = Image.decodeDimensions(reader);
+    const width = dimensions.x;
+    const height = dimensions.y;
+    let palette;
+    if (paletteIncluded === flags.PaletteIncluded.Yes) {
+      palette = Image.decodePalette(
+        reader,
+        pixelMode,
+        colorChannels,
+        colorAccuracy,
+      );
+    } else {
+      palette = Image.defaultPalette(pixelMode);
+    }
+    const pixels = Image.decodePixels(reader, pixelMode, [width, height]);
+    return new Image(mode, width, height, palette, pixels);
   }
 }
