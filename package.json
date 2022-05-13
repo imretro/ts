@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "build:docs": "typedoc src/index.ts",
     "lint": "eslint src/*.ts src/**/*.ts",
     "test": "jest"
   },
@@ -37,6 +38,7 @@
   "dependencies": {
     "@imretro/bitio": "^0.2.0",
     "@imretro/color": "^0.1.1",
-    "logic-branch-helpers": "^1.0.1"
+    "logic-branch-helpers": "^1.0.1",
+    "typedoc": "^0.22.15"
   }
 }
