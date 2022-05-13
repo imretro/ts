@@ -57,6 +57,10 @@ export default class Image {
     return this.palette.color(this.pixels[index]);
   }
 
+  /**
+   * @internal
+   * @ignore
+   */
   private static validateSignature(signature: BitReader): boolean {
     const charCodes = signature.readBytes(7).filter((b: number | null): b is number => b != null);
     const s = String.fromCharCode(...charCodes);
@@ -64,12 +68,20 @@ export default class Image {
     return s === Image.signature;
   }
 
+  /**
+   * @internal
+   * @ignore
+   */
   private static decodeDimensions(reader: BitReader): Dimensions {
     const x = reader.readBits(12);
     const y = reader.readBits(12);
     return { x, y };
   }
 
+  /**
+   * @internal
+   * @ignore
+   */
   private static decodePalette(
     reader: BitReader,
     pixelMode: flags.PixelMode,
@@ -161,6 +173,10 @@ export default class Image {
     }
   }
 
+  /**
+   * @internal
+   * @ignore
+   */
   private static decodePixels(
     reader: BitReader,
     pixelMode: flags.PixelMode,

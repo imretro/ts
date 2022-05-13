@@ -5,7 +5,7 @@ export type ColorCount = 2 | 4 | 256;
 export type ChannelCount = 1 | 3 | 4;
 
 /**
- * @private
+ * @ignore
  */
 export const pixelModeToColors = (mode: PixelMode): ColorCount => {
   switch (mode) {
@@ -23,7 +23,7 @@ export const pixelModeToColors = (mode: PixelMode): ColorCount => {
 };
 
 /**
- * @private
+ * @ignore
  */
 export const colorsToPixelMode = (colors: ColorCount): PixelMode => {
   switch (colors) {
@@ -41,7 +41,7 @@ export const colorsToPixelMode = (colors: ColorCount): PixelMode => {
 };
 
 /**
- * @private
+ * @ignore
  */
 export const channelToCount = (channels: ColorChannels): ChannelCount => {
   switch (channels) {
