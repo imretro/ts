@@ -1,5 +1,10 @@
 import { unreachable } from 'logic-branch-helpers';
-import { PixelMode, ColorChannels } from './flags';
+import { 
+  PixelMode, 
+  PaletteIncluded,
+  ColorChannels,
+  ColorAccuracy,
+ } from './flags';
 
 export type ColorCount = 2 | 4 | 256;
 export type ChannelCount = 1 | 3 | 4;
@@ -55,5 +60,58 @@ export const channelToCount = (channels: ColorChannels): ChannelCount => {
     default:
       return unreachable();
     /* c8 ignore end */
+  }
+};
+
+/**
+ * @ignore
+ * 
+ * Gets the number of bytes that should be in an image.
+ */
+export const byteCount = (
+  pixelMode: PixelMode, 
+  palette: PaletteIncluded, 
+  channels: ColorChannels, 
+  accuracy: ColorAccuracy,
+  pixelCount: number,
+): number => {
+  const bytesInSignature = 7;
+  const modeByte = 1;
+  const dimensionsBytes = 3;
+
+  let bitsPerPixel: number;
+  switch (pixelMode) {
+    case PixelMode.OneBit:
+      bitsPerPixel = 1;
+      break;
+    case PixelMode.TwoBit:
+      bitsPerPixel = 2;
+      break;
+    case PixelMode.EightBit:
+      bitsPerPixel = 8;
+      break;
+    default:
+      return unreachable();
+    
+    let bitsPerChannel: number;
+    switch (accuracy) {
+      case ColorAccuracy.TwoBit:
+        bitsPerChannel = 2;
+        break;
+      case ColorAccuracy.EightBit:
+        bitsPerChannel = 8;
+        break;
+      default:
+        return unreachable();
+    }
+    const bitsPerChannel = accuracy === ColorAccuracy.TwoBit ? 2 : 8;
+    let bitsForPalette = palette === PaletteIncluded.Yes ? 
+      pixelModeToColors(pixelMode) * channelToCount(channels) * bitsPerChannel
+      : 0;
+    const bytesForPalette = Math.ceil(bitsForPalette / 8);
+
+    const bytesForPixels = Math.ceil((bitsPerPixel * pixelCount) / 8);
+    
+    return bytesInSignature + modeByte + dimensionsBytes + bytesForPalette + bytesForPixels;
   }
 };

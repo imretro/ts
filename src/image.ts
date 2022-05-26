@@ -10,6 +10,7 @@ import * as flags from './flags';
 import {
   pixelModeToColors,
   channelToCount,
+  byteCount,
 } from './util';
 
 type Dimensions = { x: number, y: number };
@@ -242,5 +243,16 @@ export default class Image {
     }
     const pixels = Image.decodePixels(reader, pixelMode, [width, height]);
     return new Image(mode, width, height, palette, pixels);
+  }
+
+  public encode(): ArrayBuffer {
+    const view = new Uint8Array(byteCount(
+      this.pixelMode,
+      this.paletteIncluded,
+      this.colorChannels,
+      this.colorAccuracy,
+      this.pixels.length,
+    ));
+    return view.buffer;
   }
 }
