@@ -1,6 +1,6 @@
 import { unreachable } from 'logic-branch-helpers';
 import {
-  PixelMode, 
+  PixelMode,
   PaletteIncluded,
   ColorChannels,
   ColorAccuracy,
@@ -65,13 +65,13 @@ export const channelToCount = (channels: ColorChannels): ChannelCount => {
 
 /**
  * @ignore
- * 
+ *
  * Gets the number of bytes that should be in an image.
  */
 export const byteCount = (
-  pixelMode: PixelMode, 
-  palette: PaletteIncluded, 
-  channels: ColorChannels, 
+  pixelMode: PixelMode,
+  palette: PaletteIncluded,
+  channels: ColorChannels,
   accuracy: ColorAccuracy,
   pixelCount: number,
 ): number => {
@@ -92,26 +92,25 @@ export const byteCount = (
       break;
     default:
       return unreachable();
-    
-    let bitsPerChannel: number;
-    switch (accuracy) {
-      case ColorAccuracy.TwoBit:
-        bitsPerChannel = 2;
-        break;
-      case ColorAccuracy.EightBit:
-        bitsPerChannel = 8;
-        break;
-      default:
-        return unreachable();
-    }
-    const bitsPerChannel = accuracy === ColorAccuracy.TwoBit ? 2 : 8;
-    let bitsForPalette = palette === PaletteIncluded.Yes ? 
-      pixelModeToColors(pixelMode) * channelToCount(channels) * bitsPerChannel
-      : 0;
-    const bytesForPalette = Math.ceil(bitsForPalette / 8);
-
-    const bytesForPixels = Math.ceil((bitsPerPixel * pixelCount) / 8);
-    
-    return bytesInSignature + modeByte + dimensionsBytes + bytesForPalette + bytesForPixels;
   }
+
+  let bitsPerChannel: number;
+  switch (accuracy) {
+    case ColorAccuracy.TwoBit:
+      bitsPerChannel = 2;
+      break;
+    case ColorAccuracy.EightBit:
+      bitsPerChannel = 8;
+      break;
+    default:
+      return unreachable();
+  }
+  const bitsForPalette = palette === PaletteIncluded.Yes
+    ? pixelModeToColors(pixelMode) * channelToCount(channels) * bitsPerChannel
+    : 0;
+  const bytesForPalette = Math.ceil(bitsForPalette / 8);
+
+  const bytesForPixels = Math.ceil((bitsPerPixel * pixelCount) / 8);
+
+  return bytesInSignature + modeByte + dimensionsBytes + bytesForPalette + bytesForPixels;
 };
