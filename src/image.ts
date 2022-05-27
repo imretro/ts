@@ -5,7 +5,7 @@ import { Reader as BitReader } from '@imretro/bitio';
 import { unreachable } from 'logic-branch-helpers';
 import type { Palette } from './palette';
 import * as palettes from './palette';
-import { DecodeError } from './errors';
+import { DecodeError, EncodeError } from './errors';
 import * as flags from './flags';
 import { pixelModeToColors, channelToCount } from './util';
 
@@ -285,8 +285,21 @@ export default class Image {
     return bytesInSignature + modeByte + dimensionsBytes + bytesForPalette + bytesForPixels;
   }
 
-  public encode(): ArrayBuffer {
-    const view = new Uint8Array(this.encodedByteCount());
+  /**
+   * Encodes the image to a buffer.
+   *
+   * If no buffer is provided, one will be created.
+   *
+   * @param buffer The ArrayBuffer to encode to.
+   *
+   * @returns The buffer with the encoded image.
+   */
+  public encode(buffer?: ArrayBuffer): ArrayBuffer {
+    const byteCount = this.encodedByteCount();
+    const view = buffer ? new Uint8Array(buffer) : new Uint8Array(byteCount);
+    if (view.length < byteCount) {
+      throw new EncodeError(`Expected at least ${byteCount} bytes, buffer has ${view.length}`);
+    }
     return view.buffer;
   }
 }
