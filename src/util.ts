@@ -1,4 +1,3 @@
-import { unreachable } from 'logic-branch-helpers';
 import { PixelMode, ColorChannels } from './flags';
 
 export type ColorCount = 2 | 4 | 256;
@@ -16,8 +15,10 @@ export const pixelModeToColors = (mode: PixelMode): ColorCount => {
     case PixelMode.EightBit:
       return 256;
     /* c8 ignore start */
-    default:
-      return unreachable();
+    default: {
+      const _: never = mode;
+      return _;
+    }
     /* c8 ignore end */
   }
 };
@@ -34,8 +35,10 @@ export const colorsToPixelMode = (colors: ColorCount): PixelMode => {
     case 256:
       return PixelMode.EightBit;
     /* c8 ignore start */
-    default:
-      return unreachable();
+    default: {
+      const _: never = colors;
+      return _;
+    }
     /* c8 ignore end */
   }
 };
@@ -52,8 +55,10 @@ export const channelToCount = (channels: ColorChannels): ChannelCount => {
     case ColorChannels.RGBA:
       return 4;
     /* c8 ignore start */
-    default:
-      return unreachable();
+    default: {
+      const _: never = channels;
+      return _;
+    }
     /* c8 ignore end */
   }
 };

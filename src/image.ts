@@ -2,7 +2,6 @@ import type { Bit } from '@imretro/bitio';
 import type { Color } from '@imretro/color';
 import { Grayscale, RGB, RGBA } from '@imretro/color';
 import { Reader as BitReader } from '@imretro/bitio';
-import { unreachable } from 'logic-branch-helpers';
 import type { Palette } from './palette';
 import * as palettes from './palette';
 import { DecodeError } from './errors';
@@ -101,8 +100,10 @@ export default class Image {
         bitsPerChannel = 8;
         break;
       /* c8 ignore start */
-      default:
-        return unreachable();
+      default: {
+        const _: never = accuracy;
+        return _;
+      }
       /* c8 ignore end */
     }
 
@@ -118,8 +119,10 @@ export default class Image {
           case 8:
             break;
           /* c8 ignore start */
-          default:
-            return unreachable();
+          default: {
+            const _: never = bitsPerChannel;
+            return _;
+          }
           /* c8 ignore end */
         }
         colorChannels.push(channel);
@@ -136,8 +139,10 @@ export default class Image {
           colors.push(new RGBA(...(colorChannels as RGBATuple)));
           break;
         /* c8 ignore start */
-        default:
-          return unreachable();
+        default: {
+          const _: never = channels;
+          return _;
+        }
         /* c8 ignore end */
       }
     }
@@ -152,8 +157,10 @@ export default class Image {
       case flags.PixelMode.EightBit:
         return new palettes.EightBit(colors);
       /* c8 ignore start */
-      default:
-        return unreachable(`Pixel mode ${pixelMode}`);
+      default: {
+        const _: never = pixelMode;
+        return _;
+      }
       /* c8 ignore end */
     }
   }
@@ -167,8 +174,10 @@ export default class Image {
       case flags.PixelMode.EightBit:
         return palettes.default8Bit;
       /* c8 ignore start */
-      default:
-        return unreachable(`Pixel mode ${pixelMode}`);
+      default: {
+        const _: never = pixelMode;
+        return _;
+      }
       /* c8 ignore end */
     }
   }
@@ -194,8 +203,10 @@ export default class Image {
         bitsPerPixel = 8;
         break;
       /* c8 ignore start */
-      default:
-        return unreachable();
+      default: {
+        const _: never = pixelMode;
+        return _;
+      }
       /* c8 ignore end */
     }
 
