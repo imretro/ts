@@ -280,7 +280,7 @@ export default class Image {
       : 0;
     const bytesForPalette = Math.ceil(bitsForPalette / 8);
 
-    const bytesForPixels = Math.ceil((bitsPerPixel * this.pixels.length) / 8);
+    const bytesForPixels = Math.ceil((bitsPerPixel * this.width * this.height) / 8);
 
     return bytesInSignature + modeByte + dimensionsBytes + bytesForPalette + bytesForPixels;
   }
