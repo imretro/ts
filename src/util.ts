@@ -16,8 +16,8 @@ export const pixelModeToColors = (mode: PixelMode): ColorCount => {
       return 256;
     /* c8 ignore start */
     default: {
-      const _: never = mode;
-      return _;
+      const unused: never = mode;
+      return unused;
     }
     /* c8 ignore end */
   }
@@ -36,8 +36,8 @@ export const colorsToPixelMode = (colors: ColorCount): PixelMode => {
       return PixelMode.EightBit;
     /* c8 ignore start */
     default: {
-      const _: never = colors;
-      return _;
+      const unused: never = colors;
+      return unused;
     }
     /* c8 ignore end */
   }
@@ -56,8 +56,8 @@ export const channelToCount = (channels: ColorChannels): ChannelCount => {
       return 4;
     /* c8 ignore start */
     default: {
-      const _: never = channels;
-      return _;
+      const unused: never = channels;
+      return unused;
     }
     /* c8 ignore end */
   }

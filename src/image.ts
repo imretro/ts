@@ -101,8 +101,8 @@ export default class Image {
         break;
       /* c8 ignore start */
       default: {
-        const _: never = accuracy;
-        return _;
+        const unused: never = accuracy;
+        return unused;
       }
       /* c8 ignore end */
     }
@@ -120,8 +120,8 @@ export default class Image {
             break;
           /* c8 ignore start */
           default: {
-            const _: never = bitsPerChannel;
-            return _;
+            const unused: never = bitsPerChannel;
+            return unused;
           }
           /* c8 ignore end */
         }
@@ -140,8 +140,8 @@ export default class Image {
           break;
         /* c8 ignore start */
         default: {
-          const _: never = channels;
-          return _;
+          const unused: never = channels;
+          return unused;
         }
         /* c8 ignore end */
       }
@@ -158,8 +158,8 @@ export default class Image {
         return new palettes.EightBit(colors);
       /* c8 ignore start */
       default: {
-        const _: never = pixelMode;
-        return _;
+        const unused: never = pixelMode;
+        return unused;
       }
       /* c8 ignore end */
     }
@@ -175,8 +175,8 @@ export default class Image {
         return palettes.default8Bit;
       /* c8 ignore start */
       default: {
-        const _: never = pixelMode;
-        return _;
+        const unused: never = pixelMode;
+        return unused;
       }
       /* c8 ignore end */
     }
@@ -204,8 +204,8 @@ export default class Image {
         break;
       /* c8 ignore start */
       default: {
-        const _: never = pixelMode;
-        return _;
+        const unused: never = pixelMode;
+        return unused;
       }
       /* c8 ignore end */
     }
