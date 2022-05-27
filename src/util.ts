@@ -1,10 +1,10 @@
 import { unreachable } from 'logic-branch-helpers';
-import { 
+import {
   PixelMode, 
   PaletteIncluded,
   ColorChannels,
   ColorAccuracy,
- } from './flags';
+} from './flags';
 
 export type ColorCount = 2 | 4 | 256;
 export type ChannelCount = 1 | 3 | 4;
