@@ -7,11 +7,7 @@ import type { Palette } from './palette';
 import * as palettes from './palette';
 import { DecodeError } from './errors';
 import * as flags from './flags';
-import {
-  pixelModeToColors,
-  channelToCount,
-  byteCount,
-} from './util';
+import { pixelModeToColors, channelToCount } from './util';
 
 type Dimensions = { x: number, y: number };
 type GrayTuple = [number];
@@ -245,14 +241,52 @@ export default class Image {
     return new Image(mode, width, height, palette, pixels);
   }
 
+  /**
+   * Get the number of bytes that would be needed to encode this image.
+   */
+  public encodedByteCount(): number {
+    const bytesInSignature = 7;
+    const modeByte = 1;
+    const dimensionsBytes = 3;
+
+    let bitsPerPixel: number;
+    switch (this.pixelMode) {
+      case flags.PixelMode.OneBit:
+        bitsPerPixel = 1;
+        break;
+      case flags.PixelMode.TwoBit:
+        bitsPerPixel = 2;
+        break;
+      case flags.PixelMode.EightBit:
+        bitsPerPixel = 8;
+        break;
+      default:
+        return unreachable();
+    }
+
+    let bitsPerChannel: number;
+    switch (this.colorAccuracy) {
+      case flags.ColorAccuracy.TwoBit:
+        bitsPerChannel = 2;
+        break;
+      case flags.ColorAccuracy.EightBit:
+        bitsPerChannel = 8;
+        break;
+      default:
+        return unreachable();
+    }
+    const bitsForPalette = this.paletteIncluded === flags.PaletteIncluded.Yes
+      ? pixelModeToColors(this.pixelMode) * channelToCount(this.colorChannels) * bitsPerChannel
+      : 0;
+    const bytesForPalette = Math.ceil(bitsForPalette / 8);
+
+    const bytesForPixels = Math.ceil((bitsPerPixel * this.pixels.length) / 8);
+
+    return bytesInSignature + modeByte + dimensionsBytes + bytesForPalette + bytesForPixels;
+  }
+
   public encode(): ArrayBuffer {
-    const view = new Uint8Array(byteCount(
-      this.pixelMode,
-      this.paletteIncluded,
-      this.colorChannels,
-      this.colorAccuracy,
-      this.pixels.length,
-    ));
+    const view = new Uint8Array(this.encodedByteCount());
     return view.buffer;
   }
 }
