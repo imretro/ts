@@ -6,7 +6,7 @@ export type ChannelCount = 1 | 3 | 4;
 /**
  * @ignore
  */
-export const pixelModeToColors = (mode: PixelMode): ColorCount => {
+export const pixelModeToColors = (mode: PixelMode & number): ColorCount => {
   switch (mode) {
     case PixelMode.OneBit:
       return 2;
@@ -26,7 +26,7 @@ export const pixelModeToColors = (mode: PixelMode): ColorCount => {
 /**
  * @ignore
  */
-export const colorsToPixelMode = (colors: ColorCount): PixelMode => {
+export const colorsToPixelMode = (colors: ColorCount & number): PixelMode => {
   switch (colors) {
     case 2:
       return PixelMode.OneBit;
@@ -46,7 +46,7 @@ export const colorsToPixelMode = (colors: ColorCount): PixelMode => {
 /**
  * @ignore
  */
-export const channelToCount = (channels: ColorChannels): ChannelCount => {
+export const channelToCount = (channels: ColorChannels & number): ChannelCount => {
   switch (channels) {
     case ColorChannels.Grayscale:
       return 1;
