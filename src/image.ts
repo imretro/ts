@@ -288,6 +288,10 @@ export default class Image {
     return bytesInSignature + modeByte + dimensionsBytes + bytesForPalette + bytesForPixels;
   }
 
+  public get modeByte(): number {
+    return this.pixelMode | this.paletteIncluded | this.colorChannels | this.colorAccuracy;
+  }
+
   /**
    * Encodes the image to a buffer.
    *
