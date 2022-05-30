@@ -1,7 +1,10 @@
 import type { Bit } from '@imretro/bitio';
 import type { Color } from '@imretro/color';
 import { Grayscale, RGB, RGBA } from '@imretro/color';
-import { Reader as BitReader } from '@imretro/bitio';
+import {
+  Reader as BitReader,
+  Writer as BitWriter,
+} from '@imretro/bitio';
 import { unreachable } from 'logic-branch-helpers';
 import type { Palette } from './palette';
 import * as palettes from './palette';
@@ -300,6 +303,13 @@ export default class Image {
     if (view.length < byteCount) {
       throw new EncodeError(`Expected at least ${byteCount} bytes, buffer has ${view.length}`);
     }
+    const writer = new BitWriter(view);
+
+    const { signature } = Image;
+    signature.split('').map((c) => c.charCodeAt(0)).forEach((b) => {
+      writer.writeBits({ bits: b, n: 8 });
+    });
+
     return view.buffer;
   }
 }

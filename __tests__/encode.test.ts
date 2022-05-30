@@ -18,4 +18,15 @@ describe('Image', () => {
       expect(image.encodedByteCount()).toBe(expected);
     });
   });
+
+  describe('encode', () => {
+    test('Encodes an image', () => {
+      const image = new Image(flags.PixelMode.OneBit, 1, 1, palettes.default1Bit, [0])
+      const encoded = image.encode();
+      const byteView = new Uint8Array(encoded);
+
+      const signature = String.fromCharCode(...byteView.slice(0, 7));
+      expect(signature).toBe('IMRETRO');
+    });
+  });
 });
