@@ -311,7 +311,7 @@ export default class Image {
 
     const { signature } = Image;
     signature.split('').map((c) => c.charCodeAt(0)).forEach((b) => {
-      writer.writeBits({ bits: b, n: 8 });
+      writer.writeByte(b);
     });
 
     return view.buffer;
