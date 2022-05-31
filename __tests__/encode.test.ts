@@ -1,4 +1,5 @@
 import { Image } from '../src/index';
+import { EncodeError } from '../src/errors';
 import * as flags from '../src/flags';
 import * as palettes from '../src/palette';
 
@@ -27,6 +28,12 @@ describe('Image', () => {
 
       const signature = String.fromCharCode(...byteView.slice(0, 7));
       expect(signature).toBe('IMRETRO');
+    });
+
+    test('throws when buffer is not large enough', () => {
+      const image = new Image(0, 1, 1, palettes.default1Bit, [0]);
+
+      expect(() => image.encode(new ArrayBuffer(0))).toThrow(EncodeError);
     });
   });
 });
