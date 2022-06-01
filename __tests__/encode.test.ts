@@ -28,6 +28,8 @@ describe('Image', () => {
 
       const signature = String.fromCharCode(...byteView.slice(0, 7));
       expect(signature).toBe('IMRETRO');
+
+      expect(byteView[8]).toBe(0b00000000);
     });
 
     test('throws when buffer is not large enough', () => {

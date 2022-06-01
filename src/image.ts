@@ -309,10 +309,13 @@ export default class Image {
     }
     const writer = new BitWriter(view);
 
+    // NOTE With size asserted, there should be no need to check write success
     const { signature } = Image;
     signature.split('').map((c) => c.charCodeAt(0)).forEach((b) => {
       writer.writeByte(b);
     });
+
+    writer.writeByte(this.modeByte);
 
     return view.buffer;
   }
