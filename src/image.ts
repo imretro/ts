@@ -317,6 +317,10 @@ export default class Image {
 
     writer.writeByte(this.modeByte);
 
+    [this.width, this.height].forEach((dimension) => {
+      writer.writeBits({ bits: dimension, n: 12 });
+    });
+
     return view.buffer;
   }
 }
