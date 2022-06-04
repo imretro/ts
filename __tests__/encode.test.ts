@@ -31,9 +31,7 @@ describe('Image', () => {
 
       expect(byteView[8]).toBe(0b00000000);
 
-      expect(byteView[9]).toBe(0x00);
-      expect(byteView[10]).toBe(0x10);
-      expect(byteView[11]).toBe(0x03);
+      expect([...byteView.slice(9, 12)]).toEqual([0x00, 0x10, 0x03]);
     });
 
     test('throws when buffer is not large enough', () => {
