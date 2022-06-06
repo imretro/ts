@@ -22,12 +22,16 @@ describe('Image', () => {
 
   describe('encode', () => {
     test('Encodes an image', () => {
-      const image = new Image(flags.PixelMode.OneBit, 1, 1, palettes.default1Bit, [0])
+      const image = new Image(flags.PixelMode.TwoBit, 0x001, 0x003, palettes.default1Bit, [0, 1, 2])
       const encoded = image.encode();
       const byteView = new Uint8Array(encoded);
 
       const signature = String.fromCharCode(...byteView.slice(0, 7));
       expect(signature).toBe('IMRETRO');
+
+      expect(byteView[7]).toBe(0b01000000);
+
+      expect([...byteView.slice(8, 11)]).toEqual([0x00, 0x10, 0x03]);
     });
 
     test('throws when buffer is not large enough', () => {
