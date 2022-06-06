@@ -74,6 +74,21 @@ describe('Palette', () => {
         expect(a).toBe(ea);
       });
     });
+
+    describe('nearest', () => {
+      const p = palette.default8Bit;
+      test.each([
+        [new color.Alpha(0), p.color(0)],
+        [new color.Alpha(1), p.color(0)],
+        [new color.Grayscale(0), p.color(192)],
+        [new color.Grayscale(1), p.color(192)],
+        [new color.RGB(0xFF, 0xFF, 0xFF), p.color(255)],
+        [new color.RGBA(0xFF, 0, 0, 0x55), p.color(67)],
+        [new color.RGBA(0xFE, 0, 0, 0x56), p.color(67)],
+      ])('Color %p is nearest to %p', (input, expected) => {
+        expect(p.nearest(input)).toBe(expected);
+      });
+    });
   });
 
   describe('color', () => {
