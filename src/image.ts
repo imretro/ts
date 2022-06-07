@@ -35,6 +35,17 @@ export default class Image {
 
   public readonly colorAccuracy: flags.ColorAccuracy;
 
+  /**
+   * Creates an Imretro image.
+   *
+   * @param mode The flags set on the mode byte.
+   *
+   * @param palette The image's palette. One of the default palettes can be
+   * used.
+   *
+   * @param pixels The pixel values of the image. These can be thought of as
+   * indices into the palette.
+   */
   public constructor(
     mode: Mode,
     public readonly width: number,
