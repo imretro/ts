@@ -21,19 +21,39 @@ describe('Image', () => {
   });
 
   describe('encode', () => {
-    test('Encodes an image', () => {
-      const image = new Image(flags.PixelMode.TwoBit, 0x001, 0x003, palettes.default2Bit, [0, 1, 2])
+    test.each([
+      [
+        new Image(flags.PixelMode.TwoBit, 0x001, 0x003, palettes.default2Bit, [0, 1, 2]),
+        0b01000000,
+        [0x00, 0x10, 0x03],
+        [],
+        [],
+      ],
+      [
+        new Image(
+          flags.PixelMode.TwoBit | flags.PaletteIncluded.Yes,
+          0x001,
+          0x003,
+          palettes.default2Bit,
+          [0, 1, 2],
+        ),
+        0b01100000,
+        [0x00, 0x10, 0x03],
+        [0b00011011],
+        [],
+      ],
+    ])('Encodes (%p) to bytes %p %p %p %p', (image, mode, dimensions, palette, _pixels) => {
       const encoded = image.encode();
       const byteView = new Uint8Array(encoded);
 
       const signature = String.fromCharCode(...byteView.slice(0, 7));
       expect(signature).toBe('IMRETRO');
 
-      expect(byteView[7]).toBe(0b01000000);
+      expect(byteView[7]).toBe(mode);
 
-      expect([...byteView.slice(8, 11)]).toEqual([0x00, 0x10, 0x03]);
+      expect([...byteView.slice(8, 11)]).toEqual(dimensions);
 
-      expect(byteView[11]).toBe(0b00011011);
+      expect([...byteView.slice(11, 11 + palette.length)]).toEqual(palette);
     });
 
     test('throws when buffer is not large enough', () => {

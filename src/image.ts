@@ -341,12 +341,14 @@ export default class Image {
     }
     const channelBitCount = channelBits(this.colorAccuracy);
 
-    this.palette.forEach((color: Color) => {
-      channels.forEach((channel) => {
-        const bits = color[channel] >> (8 - channelBitCount);
-        writer.writeBits({ bits, n: channelBitCount });
+    if (this.paletteIncluded === flags.PaletteIncluded.Yes) {
+      this.palette.forEach((color: Color) => {
+        channels.forEach((channel) => {
+          const bits = color[channel] >> (8 - channelBitCount);
+          writer.writeBits({ bits, n: channelBitCount });
+        });
       });
-    });
+    }
 
     return view.buffer;
   }
