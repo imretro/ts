@@ -1,15 +1,19 @@
 import type { Bit } from '@imretro/bitio';
 import type { Color } from '@imretro/color';
 import { Grayscale, RGB, RGBA } from '@imretro/color';
-import { Reader as BitReader } from '@imretro/bitio';
+import {
+  Reader as BitReader,
+  Writer as BitWriter,
+} from '@imretro/bitio';
 import { unreachable } from 'logic-branch-helpers';
 import type { Palette } from './palette';
 import * as palettes from './palette';
-import { DecodeError } from './errors';
+import { DecodeError, EncodeError } from './errors';
 import * as flags from './flags';
 import {
   pixelModeToColors,
   channelToCount,
+  channelBits,
 } from './util';
 
 type Dimensions = { x: number, y: number };
@@ -242,5 +246,110 @@ export default class Image {
     }
     const pixels = Image.decodePixels(reader, pixelMode, [width, height]);
     return new Image(mode, width, height, palette, pixels);
+  }
+
+  /**
+   * Get the number of bytes that would be needed to encode this image.
+   */
+  public encodedByteCount(): number {
+    const bytesInSignature = 7;
+    const modeByte = 1;
+    const dimensionsBytes = 3;
+
+    let bitsPerPixel: number;
+    switch (this.pixelMode) {
+      case flags.PixelMode.OneBit:
+        bitsPerPixel = 1;
+        break;
+      case flags.PixelMode.TwoBit:
+        bitsPerPixel = 2;
+        break;
+      case flags.PixelMode.EightBit:
+        bitsPerPixel = 8;
+        break;
+      default:
+        return unreachable();
+    }
+
+    let bitsPerChannel: number;
+    switch (this.colorAccuracy) {
+      case flags.ColorAccuracy.TwoBit:
+        bitsPerChannel = 2;
+        break;
+      case flags.ColorAccuracy.EightBit:
+        bitsPerChannel = 8;
+        break;
+      default:
+        return unreachable();
+    }
+    const bitsForPalette = this.paletteIncluded === flags.PaletteIncluded.Yes
+      ? pixelModeToColors(this.pixelMode) * channelToCount(this.colorChannels) * bitsPerChannel
+      : 0;
+    const bytesForPalette = Math.ceil(bitsForPalette / 8);
+
+    const bytesForPixels = Math.ceil((bitsPerPixel * this.width * this.height) / 8);
+
+    return bytesInSignature + modeByte + dimensionsBytes + bytesForPalette + bytesForPixels;
+  }
+
+  public get modeByte(): number {
+    return this.pixelMode | this.paletteIncluded | this.colorChannels | this.colorAccuracy;
+  }
+
+  /**
+   * Encodes the image to a buffer.
+   *
+   * If no buffer is provided, one will be created.
+   *
+   * @param buffer The ArrayBuffer to encode to.
+   *
+   * @returns The buffer with the encoded image.
+   */
+  public encode(buffer?: ArrayBuffer): ArrayBuffer {
+    const byteCount = this.encodedByteCount();
+    const view = buffer ? new Uint8Array(buffer) : new Uint8Array(byteCount);
+    if (view.length < byteCount) {
+      throw new EncodeError(`Expected at least ${byteCount} bytes, buffer has ${view.length}`);
+    }
+    const writer = new BitWriter(view);
+
+    // NOTE With size asserted, there should be no need to check write success
+    const { signature } = Image;
+    signature.split('').map((c) => c.charCodeAt(0)).forEach((b) => {
+      writer.writeByte(b);
+    });
+
+    writer.writeByte(this.modeByte);
+
+    [this.width, this.height].forEach((dimension) => {
+      writer.writeBits({ bits: dimension, n: 12 });
+    });
+
+    let channels: (keyof Color & ('r' | 'g' | 'b' | 'a'))[];
+    switch (this.colorChannels) {
+      case flags.ColorChannels.Grayscale:
+        channels = ['r'];
+        break;
+      case flags.ColorChannels.RGB:
+        channels = ['r', 'g', 'b'];
+        break;
+      case flags.ColorChannels.RGBA:
+        channels = ['r', 'g', 'b', 'a'];
+        break;
+      default:
+        return unreachable();
+    }
+    const channelBitCount = channelBits(this.colorAccuracy);
+
+    if (this.paletteIncluded === flags.PaletteIncluded.Yes) {
+      this.palette.forEach((color: Color) => {
+        channels.forEach((channel) => {
+          const bits = color[channel] >> (8 - channelBitCount);
+          writer.writeBits({ bits, n: channelBitCount });
+        });
+      });
+    }
+
+    return view.buffer;
   }
 }

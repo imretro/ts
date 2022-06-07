@@ -1,3 +1,4 @@
+import type { Mode } from '../src/image';
 import { Image } from '../src/index';
 import * as palette from '../src/palette';
 import {
@@ -28,6 +29,22 @@ describe('Image', () => {
       expect(m.paletteIncluded).toBe(paletteIncluded);
       expect(m.colorChannels).toBe(colorChannels);
       expect(m.colorAccuracy).toBe(colorAccuracy);
+    });
+  });
+
+  describe('modeByte', () => {
+    test.each([
+      [[PixelMode.OneBit, PaletteIncluded.No, ColorChannels.Grayscale, ColorAccuracy.TwoBit], 0b00000000],
+      [[PixelMode.EightBit, PaletteIncluded.Yes, ColorChannels.RGBA, ColorAccuracy.EightBit], 0b10100101],
+      [0b10100101, 0b10100101],
+    ])('new Image(%p) has mode byte %d', (mode, expected) => {
+      const m = new Image(
+        mode as Mode,
+        1, 1,
+        palette.default1Bit,
+        [0],
+      );
+      expect(m.modeByte).toBe(expected);
     });
   });
 });
