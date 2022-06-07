@@ -2,6 +2,7 @@ import type { Color } from '@imretro/color';
 import { Alpha } from '@imretro/color';
 import { PixelMode } from '../flags';
 import type { ColorCount } from '../util';
+import type { ColorCb } from './types';
 import { pixelModeToColors as toColorCount } from '../util';
 
 const noColor = new Alpha(0);
@@ -59,5 +60,14 @@ export default abstract class Palette {
         check.distance < nearest.distance ? check : nearest
       ), { color: noColor, distance: Infinity });
     return nearestColor;
+  }
+
+  /**
+   * Executes the callback on each color.
+   *
+   * @param cb The callback.
+   */
+  public forEach(cb: ColorCb) {
+    return this.colors.forEach(cb);
   }
 }

@@ -10,7 +10,11 @@ import type { Palette } from './palette';
 import * as palettes from './palette';
 import { DecodeError, EncodeError } from './errors';
 import * as flags from './flags';
-import { pixelModeToColors, channelToCount } from './util';
+import {
+  pixelModeToColors,
+  channelToCount,
+  channelBits,
+} from './util';
 
 type Dimensions = { x: number, y: number };
 type GrayTuple = [number];
@@ -319,6 +323,29 @@ export default class Image {
 
     [this.width, this.height].forEach((dimension) => {
       writer.writeBits({ bits: dimension, n: 12 });
+    });
+
+    let channels: (keyof Color & ('r' | 'g' | 'b' | 'a'))[];
+    switch (this.colorChannels) {
+      case flags.ColorChannels.Grayscale:
+        channels = ['r'];
+        break;
+      case flags.ColorChannels.RGB:
+        channels = ['r', 'g', 'b'];
+        break;
+      case flags.ColorChannels.RGBA:
+        channels = ['r', 'g', 'b', 'a'];
+        break;
+      default:
+        return unreachable();
+    }
+    const channelBitCount = channelBits(this.colorAccuracy);
+
+    this.palette.forEach((color: Color) => {
+      channels.forEach((channel) => {
+        const bits = color[channel] >> (8 - channelBitCount);
+        writer.writeBits({ bits, n: channelBitCount });
+      });
     });
 
     return view.buffer;

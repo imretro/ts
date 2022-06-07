@@ -22,7 +22,7 @@ describe('Image', () => {
 
   describe('encode', () => {
     test('Encodes an image', () => {
-      const image = new Image(flags.PixelMode.TwoBit, 0x001, 0x003, palettes.default1Bit, [0, 1, 2])
+      const image = new Image(flags.PixelMode.TwoBit, 0x001, 0x003, palettes.default2Bit, [0, 1, 2])
       const encoded = image.encode();
       const byteView = new Uint8Array(encoded);
 
@@ -32,6 +32,8 @@ describe('Image', () => {
       expect(byteView[7]).toBe(0b01000000);
 
       expect([...byteView.slice(8, 11)]).toEqual([0x00, 0x10, 0x03]);
+
+      expect(byteView[11]).toBe(0b00011011);
     });
 
     test('throws when buffer is not large enough', () => {
